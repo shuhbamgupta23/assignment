@@ -19,7 +19,7 @@ app.use("/", RecipeRouter);
 const start = async () => {
   try {
     await mongoose.connect(
-      "mongodb+srv://mrjanuaryx:123@cluster0.nt5nc3c.mongodb.net/?retryWrites=true&w=majority"
+      "mongodb+srv://achintya7788:7788@cluster0.twa4jcr.mongodb.net/?retryWrites=true&w=majority"
     );
     app.listen(4000, () => {
       console.log("listening on port 4000 and connected to MongoDB");
