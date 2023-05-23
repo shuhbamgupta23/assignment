@@ -5,12 +5,12 @@ import jwt from "jsonwebtoken";
 
 export const registeruser = async (req, res) => {
   const { email, password } = req.body;
-  console.log(email, password)
+  console.log(email, password);
   try {
-    // var hashPwd = await bcrypt.hash(password, 10);
+    var hashPwd = await bcrypt.hash(password, 10);
     const user = await registerSchema.create({
       email,
-      password,
+      password: hashPwd,
     });
     res.json({ message: "Registered Successfully", user: user });
   } catch (err) {
@@ -22,19 +22,25 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await registerSchema.findOne({ email, password });
+    const user = await registerSchema.findOne({ email });
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: "Invalid User or Password",
+        message: "User not found",
         user: user,
       });
     }
-
+    const result = await bcrypt.compare(password, user.password);
+    if (result === false) {
+      return res.status(400).json({
+        success: false,
+        message: "Incorrect Password",
+      });
+    }
     const token = jwt.sign({ _id: user._id }, "TRIAL");
     res
       .status(200)
-      .cookie("token", token, { 
+      .cookie("token", token, {
         expires: new Date(Date.now() + 600000),
         httpOnly: true,
       })
